@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace BackEndAPI.Service
 {
@@ -31,7 +32,8 @@ namespace BackEndAPI.Service
         Task<ApiResult<bool>> Delete(Guid Id);
         Task<List<RoleVm>> GetAllRole();
         Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request);
-        Task<string> TokenForgotPass(InputModel Input);
+        Task<ApiResult<string>> TokenForgotPass(InputModel Input);
+        Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token);
     }
     public class ServiceAPIUser : IServiceAPIUser
     {
@@ -161,10 +163,13 @@ namespace BackEndAPI.Service
                 PhoneNumber = request.PhoneNumber
             };
             var result = await _userManager.CreateAsync(user, request.PassWord);
-            if (result.Succeeded)
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var end= await _userManager.ConfirmEmailAsync(user, token);
+            if (end.Succeeded)
             {
                 return new ApiSuccessResult<bool>();
             }
+            
             return new ApiErrorResult<bool>("Đăng ký không thành công");
         }
 
@@ -229,20 +234,41 @@ namespace BackEndAPI.Service
 
             return new ApiSuccessResult<bool>();
         }
-        public async Task<string> TokenForgotPass(InputModel Input)
+        public async Task<ApiResult<string>> TokenForgotPass(InputModel Input)
         {
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                return ("ko thanh cong");
+                return new ApiErrorResult<string>("ko thanh cong");
             }
 
             // Phát sinh Token để reset password
             // Token sẽ được kèm vào link trong email,
             // link dẫn đến trang /Account/ResetPassword để kiểm tra và đặt lại mật khẩu
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            return token;
+            token = System.Web.HttpUtility.UrlEncode(token);
+            /*token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));*/
+            return new ApiSuccessResult<string>(token);
+        }
+        public async Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token)
+        {
+            if (email == null || token==null)
+            {
+                return new ApiErrorResult<bool>(false.ToString());
+            }
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return new ApiErrorResult<bool>(false.ToString());
+            }
+            var password = "Quan2001@";
+            string code = token;
+            var result = await _userManager.ResetPasswordAsync(user, code, password);
+            if (result.Succeeded)
+            {
+                return new ApiSuccessResult<bool>(true);
+            }
+            return new ApiErrorResult<bool>(false.ToString());
         }
     }
 }

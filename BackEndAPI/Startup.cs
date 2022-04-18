@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,9 +32,20 @@ namespace BackEndAPI
         {
             services.AddDbContext<UserAndTestDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("UserAndTestnDb")));
-            services.AddIdentity<AppUser, AppRole>()
+            services.AddIdentity<AppUser, AppRole>(options=> {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 5;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireUppercase = false;
+                options.User.RequireUniqueEmail = true;
+            })
                 .AddEntityFrameworkStores<UserAndTestDbContext>()
                 .AddDefaultTokenProviders();
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(2);
+            });
             //khaibao
             services.AddTransient<IServiceAPIUser, ServiceAPIUser>();
             //----+
@@ -97,6 +109,7 @@ namespace BackEndAPI
                     IssuerSigningKey = new SymmetricSecurityKey(signingKeyBytes)
                 };
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

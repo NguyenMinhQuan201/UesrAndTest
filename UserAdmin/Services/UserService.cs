@@ -24,6 +24,7 @@ namespace UserAdmin.Services
         Task<ApiResult<List<RoleVm>>> GetAllRole();
         Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request);
         Task<ApiResult<string>> GetTokenForgotPass(InputModel Input);
+        Task<ApiResult<string>> ResetPasswordConfirm(string email, string token);
     }
 
     public class UserService : IUserService
@@ -198,7 +199,20 @@ namespace UserAdmin.Services
             if (response.IsSuccessStatusCode)
                 return JsonConvert.DeserializeObject<ApiSuccessResult<string>>(result);
 
-            return JsonConvert.DeserializeObject<ApiErrorResult<string>>(result);
+            return JsonConvert.DeserializeObject<ApiErrorResult<string>>("that bai");
+        }
+        public async Task<ApiResult<string>> ResetPasswordConfirm(string email,string token)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+            var sessions = _httpContextAccessor.HttpContext.Session.GetString("Token");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sessions);
+            var response = await client.GetAsync($"/api/Users/ResetPasswordConfirm?email={email}&token={token}");
+            var result = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+                return JsonConvert.DeserializeObject<ApiSuccessResult<string>>(result);
+
+            return JsonConvert.DeserializeObject<ApiErrorResult<string>>("that bai");
         }
     }
 }

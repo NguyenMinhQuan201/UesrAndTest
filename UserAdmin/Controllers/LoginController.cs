@@ -93,17 +93,31 @@ namespace UserAdmin.Controllers
             if (ModelState.IsValid)
             {
                 // Tìm user theo email gửi đến
-                var kq = _userAPIClient.GetTokenForgotPass(Input);
+                var kq = await _userAPIClient.GetTokenForgotPass(Input);
 
-                var callbackUrl = Url.Page(
-                    "/Login/ResetPassword",
+                /*var callbackUrl = Url.Action(
+                    "/Login/ResetPasswordConfirm",
                     pageHandler: null,
-                    values: new { email = Input.Email, kq },
-                    protocol: Request.Scheme);
+                    values: new { email = Input.Email, token = kq.ResultObj },
+                    protocol: Request.Scheme);*/
+                var callbackUrl = Url.Action("ResetPasswordConfirm", "Login",
+                    new { email = Input.Email, token = kq.ResultObj },Request.Scheme
+                    );
                 var str = callbackUrl;
+
                 return RedirectToAction("ForgotPasswordConfirmation");
             }
 
+            return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> ResetPasswordConfirm(string email,string token)
+        {
+            if(email==null || token == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            var kq = await _userAPIClient.ResetPasswordConfirm(email,token);
             return View();
         }
     }
