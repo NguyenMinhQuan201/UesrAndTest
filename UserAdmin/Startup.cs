@@ -110,7 +110,7 @@ namespace UserAdmin
 
                     MailContent content = new MailContent
                     {
-                        To = "tu268.datus@gmail.com",
+                        To = "tutuan2682001@gmail.com",
                         Subject = "Kiểm tra thử",
                         Body = "<p><strong>Xin chào test 123</strong></p>"
                     };
@@ -123,7 +123,7 @@ namespace UserAdmin
 
                     // Lấy dịch vụ sendmailservice
                     var sendmailservice = context.RequestServices.GetService<ISendMailService>();
-                await sendmailservice.SendEmailAsync("tu268.datus@gmail.com", "Kiểm tra thử lan 2", "<p><strong>Xin chào test 1</strong></p>");
+                    await sendmailservice.SendEmailAsync("tutuan2682001@gmail.com", "Kiểm tra thử lan 2", "<p><strong>Xin chào test 1</strong></p>");
                     await context.Response.WriteAsync("Send mail");
                 });
             });
