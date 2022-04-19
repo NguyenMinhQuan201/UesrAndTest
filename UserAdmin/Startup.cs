@@ -1,4 +1,4 @@
-using Data.EF;
+﻿using Data.EF;
 using Data.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UserAdmin.Models;
 using UserAdmin.Services;
 
 namespace UserAdmin
@@ -48,8 +49,13 @@ namespace UserAdmin
 
             services.AddTransient<IUserService, UserService>();
 
-            /*services.AddControllersWithViews()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginRequestValidation>());*/
+            services.AddOptions(); // Kích hoạt Options
+            var mailsettings = Configuration.GetSection("MailSettings");  // đọc config
+            services.Configure<MailSettings>(mailsettings);                // đăng ký để Inject
+
+            // Đăng ký SendMailService với kiểu Transient, mỗi lần gọi dịch
+            // vụ ISendMailService một đới tượng SendMailService tạo ra (đã inject config)
+            services.AddTransient<ISendMailService, EmailSenderServices>();
 
             services.AddSession(options =>
             {
@@ -96,7 +102,32 @@ namespace UserAdmin
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapGet("/testmail", async context =>
+                {
+
+                    // Lấy dịch vụ sendmailservice
+                    var sendmailservice = context.RequestServices.GetService<ISendMailService>();
+
+                    MailContent content = new MailContent
+                    {
+                        To = "tu268.datus@gmail.com",
+                        Subject = "Kiểm tra thử",
+                        Body = "<p><strong>Xin chào test 123</strong></p>"
+                    };
+
+                    await sendmailservice.SendMail(content);
+                    await context.Response.WriteAsync("Send mail");
+                });
+                endpoints.MapGet("/testmailasync", async context =>
+                {
+
+                    // Lấy dịch vụ sendmailservice
+                    var sendmailservice = context.RequestServices.GetService<ISendMailService>();
+                await sendmailservice.SendEmailAsync("tu268.datus@gmail.com", "Kiểm tra thử lan 2", "<p><strong>Xin chào test 1</strong></p>");
+                    await context.Response.WriteAsync("Send mail");
+                });
             });
+
         }
     }
 }

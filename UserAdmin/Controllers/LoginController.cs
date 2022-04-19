@@ -82,12 +82,12 @@ namespace UserAdmin.Controllers
         {
             return View();
         }
-        [HttpGet]
+        [AllowAnonymous, HttpGet]
         public IActionResult ForgotPasswordConfirmation()
         {
             return View();
         }
-        [HttpPost]
+        [AllowAnonymous, HttpPost]
         public async Task<IActionResult> LON(InputModel Input)
         {
             if (ModelState.IsValid)
