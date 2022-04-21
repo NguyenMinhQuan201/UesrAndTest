@@ -250,6 +250,7 @@ namespace BackEndAPI.Service
             /*token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));*/
             return new ApiSuccessResult<string>(token);
         }
+
         public async Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token)
         {
             if (email == null || token==null)

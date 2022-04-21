@@ -103,9 +103,9 @@ namespace UserAdmin.Controllers
                 var callbackUrl = Url.Action("ResetPasswordConfirm", "Login",
                     new { email = Input.Email, token = kq.ResultObj },Request.Scheme
                     );
-                var str = callbackUrl;
-
-                return RedirectToAction("ForgotPasswordConfirmation");
+                var str = "lay lai mat khau";
+                await new EmailSender().SendEmailAsync(Input.Email, str, callbackUrl);
+                return RedirectToAction("Text");
             }
 
             return View();
@@ -118,6 +118,17 @@ namespace UserAdmin.Controllers
                 return RedirectToAction("Index", "Login");
             }
             var kq = await _userAPIClient.ResetPasswordConfirm(email,token);
+            return View();
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> ForgotPasswordConfirmation(string email,string token,string newpassword)
+        {
+            if (email == null || token == null)
+            {
+                return RedirectToAction("Index", "Login");
+            }
+            var kq = await _userAPIClient.ResetPasswordConfirm(email, token);
             return View();
         }
     }
