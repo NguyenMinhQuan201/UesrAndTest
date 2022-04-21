@@ -110,7 +110,7 @@ namespace UserAdmin
 
                     MailContent content = new MailContent
                     {
-                        To = "tutuan2682001@gmail.com",
+                        To = "quannm2812@gmail.com",
                         Subject = "Kiểm tra thử",
                         Body = "<p><strong>Xin chào test 123</strong></p>"
                     };

@@ -2,6 +2,7 @@
 using Data.EF;
 using Data.Entities;
 using Data.MMM;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -81,7 +82,7 @@ namespace BackEndAPI.Service
 
             return new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
         }
-
+        [Authorize, ]
         public async Task<ApiResult<bool>> Delete(Guid Id)
         {
             var user = await _userManager.FindByIdAsync(Id.ToString());
@@ -90,6 +91,7 @@ namespace BackEndAPI.Service
                 return new ApiErrorResult<bool>("User ko ton tai");
             }
             var result = await _userManager.DeleteAsync(user);
+            var a = await _userManager.IsInRoleAsync(user, "admin");
             if (result.Succeeded)
             {
                 return new ApiSuccessResult<bool>();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace UserAdmin.Models
 {
-    public static class MailUtils
+    public class MailUtils
     {
         /// <summary>
         /// Gửi Email

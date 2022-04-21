@@ -19,16 +19,18 @@ namespace UserAdmin.Services
     public class EmailSenderServices : ISendMailService
     {
         private readonly MailSettings mailSettings;
+        private readonly MailUtils mail;
 
         private readonly ILogger<EmailSenderServices> logger;
 
 
         // mailSetting được Inject qua dịch vụ hệ thống
         // Có inject Logger để xuất log
-        public EmailSenderServices(IOptions<MailSettings> _mailSettings, ILogger<EmailSenderServices> _logger)
+        public EmailSenderServices(IOptions<MailSettings> _mailSettings, ILogger<EmailSenderServices> _logger, MailUtils _mail)
         {
             mailSettings = _mailSettings.Value;
             logger = _logger;
+            mail = _mail;
             logger.LogInformation("Create SendMailService");
         }
 
@@ -39,7 +41,6 @@ namespace UserAdmin.Services
             email.Sender = MailboxAddress.Parse(mailSettings.Mail);
             email.To.Add(MailboxAddress.Parse(mailContent.To));
             email.Subject = mailContent.Subject;
-
 
             var builder = new BodyBuilder();
             builder.HtmlBody = mailContent.Body;
