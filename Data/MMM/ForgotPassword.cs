@@ -11,6 +11,7 @@ namespace Data.MMM
         public string NewPassWord { get; set; }
         public string ConfirmPassWord { get; set; }
         public string Token { get; set; }
+        public string Email { get; set; }
 
     }
 }

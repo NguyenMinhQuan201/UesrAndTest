@@ -30,10 +30,10 @@ namespace BackEndAPI.Service
         Task<ApiResult<GetList<UserVm>>> GetUsersPaging();
         Task<ApiResult<UserVm>> GetById(Guid Id);
         Task<ApiResult<bool>> Delete(Guid Id);
-        Task<List<RoleVm>> GetAllRole();
+        
         Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request);
         Task<ApiResult<string>> TokenForgotPass(InputModel Input);
-        Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token);
+        Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token,string newpassword);
     }
     public class ServiceAPIUser : IServiceAPIUser
     {
@@ -194,18 +194,7 @@ namespace BackEndAPI.Service
             }
             return new ApiErrorResult<bool>("Cap Nhat không thành công");
         }
-        public async Task<List<RoleVm>> GetAllRole()
-        {
-            var roles = await _roleManager.Roles
-                .Select(x => new RoleVm()
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Description = x.Description
-                }).ToListAsync();
-
-            return roles;
-        }
+        
         public async Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -251,7 +240,7 @@ namespace BackEndAPI.Service
             return new ApiSuccessResult<string>(token);
         }
 
-        public async Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token)
+        public async Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token,string newpassword)
         {
             if (email == null || token==null)
             {
@@ -262,9 +251,8 @@ namespace BackEndAPI.Service
             {
                 return new ApiErrorResult<bool>(false.ToString());
             }
-            var password = "Quan2001@";
             string code = token;
-            var result = await _userManager.ResetPasswordAsync(user, code, password);
+            var result = await _userManager.ResetPasswordAsync(user, code, newpassword);
             if (result.Succeeded)
             {
                 return new ApiSuccessResult<bool>(true);

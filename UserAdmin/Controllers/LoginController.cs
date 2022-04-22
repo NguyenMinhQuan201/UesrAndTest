@@ -83,9 +83,9 @@ namespace UserAdmin.Controllers
             return View();
         }
         [HttpGet]
-        public IActionResult ForgotPasswordConfirmation()
+        public IActionResult ForgotPasswordConfirmation(ForgotPassword forgotPassword)
         {
-            return View();
+            return View(forgotPassword);
         }
         [HttpPost]
         public async Task<IActionResult> LON(InputModel Input)
@@ -100,7 +100,7 @@ namespace UserAdmin.Controllers
                     pageHandler: null,
                     values: new { email = Input.Email, token = kq.ResultObj },
                     protocol: Request.Scheme);*/
-                var callbackUrl = Url.Action("ResetPasswordConfirm", "Login",
+                var callbackUrl = Url.Action("ForgotPasswordConfirmation", "Login",
                     new { email = Input.Email, token = kq.ResultObj },Request.Scheme
                     );
                 var str = "lay lai mat khau";
@@ -111,6 +111,11 @@ namespace UserAdmin.Controllers
             return View();
         }
         [HttpGet]
+        public IActionResult Text()
+        {
+            return View();
+        }
+       /* [HttpGet]
         public async Task<IActionResult> ResetPasswordConfirm(string email,string token)
         {
             if(email==null || token == null)
@@ -118,18 +123,25 @@ namespace UserAdmin.Controllers
                 return RedirectToAction("Index", "Login");
             }
             var kq = await _userAPIClient.ResetPasswordConfirm(email,token);
-            return View();
-        }
+            return RedirectToAction("ForgotPasswordConfirmation");
+        }*/
         
         [HttpPost]
         public async Task<IActionResult> ForgotPasswordConfirmation(string email,string token,string newpassword)
         {
-            if (email == null || token == null)
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction("Index", "Login");
+                return View(ModelState);
             }
-            var kq = await _userAPIClient.ResetPasswordConfirm(email, token);
-            return View();
+            else
+            {
+                if (email == null || token == null || newpassword == null)
+                {
+                    return View();
+                }
+                var kq = await _userAPIClient.ResetPasswordConfirm(email, token, newpassword);
+                return RedirectToAction("Index");
+            }
         }
     }
 }

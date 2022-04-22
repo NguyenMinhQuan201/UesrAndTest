@@ -110,9 +110,9 @@ namespace BackEndAPI.Controllers
         }
         [AllowAnonymous]
         [HttpGet("ResetPasswordConfirm")]
-        public async Task<IActionResult> ResetPasswordConfirm(string email,string token)
+        public async Task<IActionResult> ResetPasswordConfirm(string email,string token,string newpassword)
         {
-            var kq = await _serviceAPIUser.GetResetPasswordConfirm(email, token);
+            var kq = await _serviceAPIUser.GetResetPasswordConfirm(email, token,newpassword);
             return Ok(kq);
         }
     }

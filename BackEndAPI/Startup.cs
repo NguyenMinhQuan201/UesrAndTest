@@ -48,6 +48,7 @@ namespace BackEndAPI
             });
             //khaibao
             services.AddTransient<IServiceAPIUser, ServiceAPIUser>();
+            services.AddTransient<IServiceRole, ServiceRole>();
             //----+
             services.AddControllersWithViews();
             services.AddSwaggerGen(c =>
