@@ -101,7 +101,7 @@ namespace UserAdmin.Controllers
                     values: new { email = Input.Email, token = kq.ResultObj },
                     protocol: Request.Scheme);*/
                 var callbackUrl = Url.Action("ForgotPasswordConfirmation", "Login",
-                    new { email = Input.Email, token = kq.ResultObj },Request.Scheme
+                    new { email = Input.Email, token = kq.ResultObj }, Request.Scheme
                     );
                 var str = "lay lai mat khau";
                 await new EmailSender().SendEmailAsync(Input.Email, str, callbackUrl);
@@ -115,19 +115,19 @@ namespace UserAdmin.Controllers
         {
             return View();
         }
-       /* [HttpGet]
-        public async Task<IActionResult> ResetPasswordConfirm(string email,string token)
-        {
-            if(email==null || token == null)
-            {
-                return RedirectToAction("Index", "Login");
-            }
-            var kq = await _userAPIClient.ResetPasswordConfirm(email,token);
-            return RedirectToAction("ForgotPasswordConfirmation");
-        }*/
-        
+        /* [HttpGet]
+         public async Task<IActionResult> ResetPasswordConfirm(string email,string token)
+         {
+             if(email==null || token == null)
+             {
+                 return RedirectToAction("Index", "Login");
+             }
+             var kq = await _userAPIClient.ResetPasswordConfirm(email,token);
+             return RedirectToAction("ForgotPasswordConfirmation");
+         }*/
+
         [HttpPost]
-        public async Task<IActionResult> ForgotPasswordConfirmation(string email,string token,string newpassword)
+        public async Task<IActionResult> ForgotPasswordConfirmation(string email, string token, string newpassword)
         {
             if (!ModelState.IsValid)
             {

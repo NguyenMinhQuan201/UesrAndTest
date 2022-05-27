@@ -6,18 +6,20 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.Extensions.Configuration;
 namespace BackEndAPI.Service
 {
     public class UserService : IUserServices
     {
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
+        private readonly IConfiguration _config;
 
-        public UserService(IUserRepository userRepository, IRoleRepository roleRepository)
+        public UserService(IUserRepository userRepository, IRoleRepository roleRepository,IConfiguration config)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
+            _config = config;
         }
 
         public async Task<LoginResult> Login(LoginParams loginParams)

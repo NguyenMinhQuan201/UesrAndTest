@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace Data.MMM
 {
-    public class MailRequest
+    public class classa
     {
-        public string ToEmail { get; set; }
-        public string Subject { get; set; }
-        public string Body { get; set; }
-        public List<IFormFile> Attachments { get; set; }
+        public string stringA { get; set; }
+    }
+    public class classb
+    {
+        public string stringA { get; set; }
+        public string SString()
+        {
+            return stringA + "haha";
+        }
     }
 }

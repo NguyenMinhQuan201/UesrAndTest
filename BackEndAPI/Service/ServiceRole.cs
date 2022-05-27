@@ -43,9 +43,9 @@ namespace BackEndAPI.Service
             }
             var user = new AppRole()
             {
-                Description= request.Name,
-                Name=request.Name,
-                NormalizedName=request.Name
+                Description = request.Name,
+                Name = request.Name,
+                NormalizedName = request.Name
             };
             var end = await _roleManager.CreateAsync(user);
             if (end.Succeeded)
@@ -59,7 +59,7 @@ namespace BackEndAPI.Service
         public async Task<ApiResult<bool>> Remove(RemoveRoleRequest request)
         {
             var val = await _roleManager.FindByIdAsync(request.Id.ToString());
-            if(val == null)
+            if (val == null)
             {
                 return new ApiErrorResult<bool>("Xoas không thành công");
             }

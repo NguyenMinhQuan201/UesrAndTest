@@ -30,10 +30,10 @@ namespace BackEndAPI.Service
         Task<ApiResult<GetList<UserVm>>> GetUsersPaging();
         Task<ApiResult<UserVm>> GetById(Guid Id);
         Task<ApiResult<bool>> Delete(Guid Id);
-        
+
         Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request);
         Task<ApiResult<string>> TokenForgotPass(InputModel Input);
-        Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token,string newpassword);
+        Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token, string newpassword);
     }
     public class ServiceAPIUser : IServiceAPIUser
     {
@@ -113,14 +113,14 @@ namespace BackEndAPI.Service
                 Id = Id,
                 LastName = user.LastName,
                 UserName = user.UserName,
-                Roles=roles
+                Roles = roles
             };
             return new ApiSuccessResult<UserVm>(Uservm);
         }
 
         public async Task<ApiResult<GetList<UserVm>>> GetUsersPaging()
         {
-            var data = await _userManager.Users.Select(x=> new UserVm() 
+            var data = await _userManager.Users.Select(x => new UserVm()
             {
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber,
@@ -129,7 +129,7 @@ namespace BackEndAPI.Service
                 Id = x.Id,
                 LastName = x.LastName,
             }).ToListAsync();
-            if (data==null)
+            if (data == null)
             {
                 return new ApiErrorResult<GetList<UserVm>>("KO");
             }
@@ -164,12 +164,12 @@ namespace BackEndAPI.Service
             };
             var result = await _userManager.CreateAsync(user, request.PassWord);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var end= await _userManager.ConfirmEmailAsync(user, token);
+            var end = await _userManager.ConfirmEmailAsync(user, token);
             if (end.Succeeded)
             {
                 return new ApiSuccessResult<bool>();
             }
-            
+
             return new ApiErrorResult<bool>("Đăng ký không thành công");
         }
 
@@ -194,7 +194,7 @@ namespace BackEndAPI.Service
             }
             return new ApiErrorResult<bool>("Cap Nhat không thành công");
         }
-        
+
         public async Task<ApiResult<bool>> RoleAssign(Guid id, RoleAssignRequest request)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
@@ -240,9 +240,9 @@ namespace BackEndAPI.Service
             return new ApiSuccessResult<string>(token);
         }
 
-        public async Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token,string newpassword)
+        public async Task<ApiResult<bool>> GetResetPasswordConfirm(string email, string token, string newpassword)
         {
-            if (email == null || token==null)
+            if (email == null || token == null)
             {
                 return new ApiErrorResult<bool>(false.ToString());
             }

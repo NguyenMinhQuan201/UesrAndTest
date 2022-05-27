@@ -1,3 +1,6 @@
+using AutoMapper;
+using BackEndAPI.Mapper;
+using BackEndAPI.Repositories;
 using BackEndAPI.Service;
 using Data.EF;
 using Data.Entities;
@@ -30,6 +33,16 @@ namespace BackEndAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Auto Mapper Configurations
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            services.AddMvc();
+
             services.AddDbContext<UserAndTestDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("UserAndTestnDb")));
             services.AddIdentity<AppUser, AppRole>(options=> {
@@ -46,9 +59,13 @@ namespace BackEndAPI
             {
                 options.TokenLifespan = TimeSpan.FromHours(2);
             });
-            //khaibao
+            //khaibao Service
             services.AddTransient<IServiceAPIUser, ServiceAPIUser>();
             services.AddTransient<IServiceRole, ServiceRole>();
+            services.AddTransient<ITestEngService, TestEngService>();
+            //khaibao Repository
+            services.AddTransient<ITestEngRepository, TestEngRepository>();
+
             //----+
             services.AddControllersWithViews();
             services.AddSwaggerGen(c =>
