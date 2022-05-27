@@ -32,6 +32,10 @@ namespace UserAdmin.Controllers
             {
                 return View();
             }
+            if (TempData["result"] != null)
+            {
+                ViewBag.SuccessMsg = TempData["result"];
+            }
             return View(result.ResultObj);
         }
         [HttpGet]
